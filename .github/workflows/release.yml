@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create release package
+        run: |
+          mkdir -p package/addons/amxmodx/scripting/include
+          cp -r amxmodx/scripting/include/breeze package/addons/amxmodx/scripting/include/
+          cp -r docs package/docs
+          cp README.md package/
+          cp CHANGELOG.md package/
+          
+          cd package
+          zip -r "../breeze-framework-${{ github.ref_name }}.zip" ./*
+      
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ github.ref_name }}"
+          VERSION_NO_V="${VERSION#v}"
+          
+          # Extract changelog section for this version
+          CHANGELOG=""
+          CAPTURE=0
+          
+          while IFS= read -r line; do
+            if [[ $line == "## $VERSION_NO_V"* ]]; then
+              CAPTURE=1
+              continue
+            fi
+            
+            if [[ $CAPTURE -eq 1 && $line == "## "* ]]; then
+              CAPTURE=0
+              break
+            fi
+            
+            if [[ $CAPTURE -eq 1 ]]; then
+              CHANGELOG="${CHANGELOG}${line}\n"
+            fi
+          done < CHANGELOG.md
+          
+          # Save to output
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Breeze Framework ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          files: breeze-framework-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

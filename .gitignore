@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.vscode/
+
+amxmodx/*
+!amxmodx/scripting/
+amxmodx/scripting/*
+!amxmodx/scripting/include/
+amxmodx/scripting/include/*
+!amxmodx/scripting/include/breeze/
+
+*.bak 

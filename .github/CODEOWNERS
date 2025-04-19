@@ -1,0 +1,14 @@
+# Default owners for everything in the repo
+* @ulquiorracode
+
+# Specific owners for framework files
+/amxmodx/scripting/include/breeze/ @ulquiorracode
+
+# Build and CI/CD configuration files
+/.github/workflows/ @ulquiorracode
+
+# Documentation owners
+/docs/ @ulquiorracode
+README.md @ulquiorracode
+CONTRIBUTING.md @ulquiorracode
+CHANGELOG.md @ulquiorracode

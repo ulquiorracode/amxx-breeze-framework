@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'amxmodx/scripting/include/breeze/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'amxmodx/scripting/include/breeze/**'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Verify framework files
+        run: |
+          echo "Checking framework files structure..."
+          if [ ! -d "amxmodx/scripting/include/breeze" ]; then
+            echo "Error: Framework directory not found!"
+            exit 1
+          fi
+          
+          echo "All framework files verified successfully!"
+  
+  package:
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create package directory
+        run: mkdir -p package/addons/amxmodx/scripting/include
+      
+      - name: Copy framework files
+        run: |
+          cp -r amxmodx/scripting/include/breeze package/addons/amxmodx/scripting/include/
+          cp -r docs package/docs
+          cp README.md package/
+          cp CHANGELOG.md package/
+      
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: breeze-framework
+          path: package/ 

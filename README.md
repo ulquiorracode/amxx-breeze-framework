@@ -1,2 +1,3 @@
-# amxx-breeze-framework
-Modular pseudo object-oriented framework for developing AMXX modular plugin system in Counter-Strike 1.6
+# AMXX Breeze Framework
+
+Test commit to trigger pre-commit hook. Updated target directory. 
